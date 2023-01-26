@@ -4,4 +4,6 @@
     <string name="dish_name">Dish Name</string>
     <string name="all_recipes">All Recipes</string>
     <string name="category_name">category name</string>
+    <string name="_3_persons">3 persons</string>
+    <string name="ingredients">ingredients</string>
 </resources>
