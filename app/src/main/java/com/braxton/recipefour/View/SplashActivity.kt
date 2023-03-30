@@ -3,15 +3,18 @@ package com.braxton.recipefour.View
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.braxton.recipefour.R
-import kotlinx.android.synthetic.main.activity_splash.*
+import com.braxton.recipefour.databinding.ActivitySplashBinding
+
 
 class SplashActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySplashBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        btnGetStarted.setOnClickListener {
+        binding.btnGetStarted.setOnClickListener {
             var intent = Intent(this@SplashActivity, HomeActivity::class.java)
             startActivity(intent)
             finish()
