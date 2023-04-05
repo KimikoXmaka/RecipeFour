@@ -1,0 +1,115 @@
+Index: app/build/generated/source/kapt/debug/com/braxton/recipefour/ViewModel/RecipeDao_Impl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build/generated/source/kapt/debug/com/braxton/recipefour/ViewModel/RecipeDao_Impl.java b/app/build/generated/source/kapt/debug/com/braxton/recipefour/ViewModel/RecipeDao_Impl.java
+--- a/app/build/generated/source/kapt/debug/com/braxton/recipefour/ViewModel/RecipeDao_Impl.java	
++++ b/app/build/generated/source/kapt/debug/com/braxton/recipefour/ViewModel/RecipeDao_Impl.java	(date 1680704231397)
+@@ -6,6 +6,7 @@
+ import androidx.room.EntityInsertionAdapter;
+ import androidx.room.RoomDatabase;
+ import androidx.room.RoomSQLiteQuery;
++import androidx.room.SharedSQLiteStatement;
+ import androidx.room.util.CursorUtil;
+ import androidx.room.util.DBUtil;
+ import androidx.sqlite.db.SupportSQLiteStatement;
+@@ -29,40 +30,63 @@
+ public final class RecipeDao_Impl implements RecipeDao {
+   private final RoomDatabase __db;
+ 
+-  private final EntityInsertionAdapter<Category> __insertionAdapterOfCategory;
++  private final EntityInsertionAdapter<CategoryItems> __insertionAdapterOfCategoryItems;
++
++  private final SharedSQLiteStatement __preparedStmtOfClearDb;
+ 
+   private final CategoryListConverter __categoryListConverter = new CategoryListConverter();
+ 
+   public RecipeDao_Impl(RoomDatabase __db) {
+     this.__db = __db;
+-    this.__insertionAdapterOfCategory = new EntityInsertionAdapter<Category>(__db) {
++    this.__insertionAdapterOfCategoryItems = new EntityInsertionAdapter<CategoryItems>(__db) {
+       @Override
+       public String createQuery() {
+-        return "INSERT OR REPLACE INTO `Category` (`id`,`categoryItems`) VALUES (nullif(?, 0),?)";
++        return "INSERT OR REPLACE INTO `CategoryItems` (`id`,`idcategory`,`strcategory`,`strcategorythumb`,`strcategorydescription`) VALUES (nullif(?, 0),?,?,?,?)";
+       }
+ 
+       @Override
+-      public void bind(SupportSQLiteStatement stmt, Category value) {
++      public void bind(SupportSQLiteStatement stmt, CategoryItems value) {
+         stmt.bindLong(1, value.getId());
+-        final String _tmp = __categoryListConverter.fromCategoryList(value.getCategrieitems());
+-        if (_tmp == null) {
++        if (value.getIdcategory() == null) {
+           stmt.bindNull(2);
+         } else {
+-          stmt.bindString(2, _tmp);
++          stmt.bindString(2, value.getIdcategory());
++        }
++        if (value.getStrcategory() == null) {
++          stmt.bindNull(3);
++        } else {
++          stmt.bindString(3, value.getStrcategory());
++        }
++        if (value.getStrcategorythumb() == null) {
++          stmt.bindNull(4);
++        } else {
++          stmt.bindString(4, value.getStrcategorythumb());
++        }
++        if (value.getStrcategorydescription() == null) {
++          stmt.bindNull(5);
++        } else {
++          stmt.bindString(5, value.getStrcategorydescription());
+         }
++      }
++    };
++    this.__preparedStmtOfClearDb = new SharedSQLiteStatement(__db) {
++      @Override
++      public String createQuery() {
++        final String _query = "DELETE FROM categoryitems";
++        return _query;
+       }
+     };
+   }
+ 
+   @Override
+-  public Object insertCategory(final Category categoryItems,
++  public Object insertCategory(final CategoryItems categoryItems,
+       final Continuation<? super Unit> continuation) {
+     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+       @Override
+       public Unit call() throws Exception {
+         __db.beginTransaction();
+         try {
+-          __insertionAdapterOfCategory.insert(categoryItems);
++          __insertionAdapterOfCategoryItems.insert(categoryItems);
+           __db.setTransactionSuccessful();
+           return Unit.INSTANCE;
+         } finally {
+@@ -71,6 +95,25 @@
+       }
+     }, continuation);
+   }
++
++  @Override
++  public Object clearDb(final Continuation<? super Unit> continuation) {
++    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
++      @Override
++      public Unit call() throws Exception {
++        final SupportSQLiteStatement _stmt = __preparedStmtOfClearDb.acquire();
++        __db.beginTransaction();
++        try {
++          _stmt.executeUpdateDelete();
++          __db.setTransactionSuccessful();
++          return Unit.INSTANCE;
++        } finally {
++          __db.endTransaction();
++          __preparedStmtOfClearDb.release(_stmt);
++        }
++      }
++    }, continuation);
++  }
+ 
+   @Override
+   public Object getAllCategory(final Continuation<? super List<Category>> continuation) {

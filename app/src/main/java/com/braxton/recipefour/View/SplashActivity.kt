@@ -7,8 +7,10 @@ import android.view.View
 import android.widget.Toast
 import com.braxton.recipefour.Model.Category
 import com.braxton.recipefour.Model.GetDataService
+import com.braxton.recipefour.Model.RecipeDatabase
 import com.braxton.recipefour.Model.RetroClientInstance
 import com.braxton.recipefour.databinding.ActivitySplashBinding
+import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
@@ -54,7 +56,15 @@ class SplashActivity : BaseActivity(), EasyPermissions.RationaleCallbacks, EasyP
     }
 
     fun insertDataIntoRoomDb(category: Category?) {
-
+launch {
+    this.let {
+        RecipeDatabase.getDatabase( this@SplashActivity).recipeDao().clearDb()
+        for (arr in category!!.categrieitems!!) {
+            RecipeDatabase.getDatabase(this@SplashActivity)
+                .recipeDao().insertCategory(arr)
+        }
+    }
+}
     }
 
     private fun hasReadStoragePermission(): Boolean {
