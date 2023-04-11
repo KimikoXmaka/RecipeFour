@@ -3,12 +3,10 @@ package com.braxton.recipefour.View
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.braxton.recipefour.Model.Category
-import com.braxton.recipefour.Model.GetDataService
-import com.braxton.recipefour.Model.RecipeDatabase
-import com.braxton.recipefour.Model.RetroClientInstance
+import com.braxton.recipefour.Model.*
 import com.braxton.recipefour.databinding.ActivitySplashBinding
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -16,6 +14,8 @@ import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.create
+import kotlin.math.log
 
 
 class SplashActivity : BaseActivity(), EasyPermissions.RationaleCallbacks, EasyPermissions.PermissionCallbacks {
@@ -43,6 +43,10 @@ class SplashActivity : BaseActivity(), EasyPermissions.RationaleCallbacks, EasyP
         call.enqueue(object: Callback<Category> {
             override fun onResponse(call: Call<Category>, response: Response<Category>) {
 
+                for (arr in response.body()!!.categrieitems!!) {
+                    getMeal(arr.strcategory)
+                }
+
                 insertDataIntoRoomDb(response.body())
 
             }
@@ -53,6 +57,46 @@ class SplashActivity : BaseActivity(), EasyPermissions.RationaleCallbacks, EasyP
             }
 
         })
+    }
+
+    fun getMeal(categoryName: String) {
+        val service = RetroClientInstance.retrofitInstance!!.create(GetDataService::class.java)
+        val call = service.getMealList(categoryName)
+        call.enqueue(object : Callback<Meal> {
+            override fun onResponse(
+                call: Call<Meal>,
+                response: Response<Meal>) {
+
+                insertMealDataIntoRoomdb(categoryName, response.body())
+            }
+
+            override fun onFailure(call: Call<Meal>, t: Throwable) {
+
+                binding.loader.visibility = View.INVISIBLE
+                Toast.makeText(this@SplashActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun insertMealDataIntoRoomdb(categoryName: String, meal: Meal?) {
+
+        launch {
+            this.let {
+                for(arr in meal!!.mealsItems!!) {
+                    var mealItemModel = MealItems(
+                        arr.id,
+                        arr.idMeal,
+                        categoryName,
+                        arr.strMeal,
+                        arr.strMealThumb
+                    )
+                    RecipeDatabase.getDatabase(this@SplashActivity)
+                        .recipeDao().insertMeal(mealItemModel)
+                    Log.d("mealData", arr.toString())
+                }
+                binding.btnGetStarted.visibility = View.VISIBLE
+            }
+        }
     }
 
     fun insertDataIntoRoomDb(category: Category?) {
@@ -67,6 +111,14 @@ launch {
 }
     }
 
+    fun clearDataBase() {
+        launch {
+            this.let {
+                RecipeDatabase.getDatabase(this@SplashActivity).recipeDao().clearDb()
+            }
+        }
+    }
+
     private fun hasReadStoragePermission(): Boolean {
         return EasyPermissions.hasPermissions(
             this,
@@ -76,6 +128,7 @@ launch {
 
     private fun readStorageTask() {
         if (hasReadStoragePermission()) {
+            clearDataBase()
             getCategories()
         } else {
             EasyPermissions.requestPermissions(

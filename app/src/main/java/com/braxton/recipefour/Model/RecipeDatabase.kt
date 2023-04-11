@@ -8,8 +8,8 @@ import androidx.room.TypeConverters
 import com.braxton.recipefour.ViewModel.RecipeDao
 import com.braxton.recipefour.ViewModel.Recipes
 
-@Database(entities = [Recipes::class, CategoryItems::class, Category::class], version = 1, exportSchema = false)
-@TypeConverters(CategoryListConverter::class)
+@Database(entities = [Recipes::class, CategoryItems::class, Category::class, Meal::class, MealItems::class], version = 1, exportSchema = false)
+@TypeConverters(CategoryListConverter::class, MealListConverter::class)
 abstract class RecipeDatabase: RoomDatabase() {
 
     companion object {

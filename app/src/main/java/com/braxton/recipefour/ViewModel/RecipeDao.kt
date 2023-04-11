@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.braxton.recipefour.Model.Category
 import com.braxton.recipefour.Model.CategoryItems
+import com.braxton.recipefour.Model.MealItems
 
 
 @Dao
@@ -19,4 +20,10 @@ interface RecipeDao {
 
     @Query("DELETE FROM categoryitems")
     suspend fun clearDb()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMeal(mealItems: MealItems?)
+
+    @Query("SELECT * FROM MealItems WHERE categoryName = :categoryName ORDER BY is DESC")
+    suspend fun getSpecificMealList(categoryName: String) : List<MealItems>
 }
