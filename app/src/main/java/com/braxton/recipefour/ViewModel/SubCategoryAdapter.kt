@@ -38,6 +38,7 @@ class SubCategoryAdapter: RecyclerView.Adapter<SubCategoryAdapter.RecipeViewHold
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): RecipeViewHolder {
+        ctx = parent.context
         return RecipeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.it_rv_sub_category, parent, false))
     }
 
@@ -45,7 +46,7 @@ class SubCategoryAdapter: RecyclerView.Adapter<SubCategoryAdapter.RecipeViewHold
        return arrSubCategory.size
     }
 
-    fun setCliclListener(listener1: SubCategoryAdapter.OnItemClickListener) {
+    fun setClickListener(listener1: SubCategoryAdapter.OnItemClickListener) {
         listener = listener1
     }
     interface OnItemClickListener {

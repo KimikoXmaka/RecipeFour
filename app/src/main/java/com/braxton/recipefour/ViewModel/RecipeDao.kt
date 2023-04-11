@@ -12,8 +12,8 @@ import com.braxton.recipefour.Model.MealItems
 @Dao
 interface RecipeDao {
 
-    @Query("SELECT * FROM category ORDER BY id DESC")
-    suspend fun getAllCategory(): List<Category>
+    @Query("SELECT * FROM categoryitems ORDER BY id DESC")
+    suspend fun getAllCategory(): List<CategoryItems>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(categoryItems: CategoryItems)
@@ -22,8 +22,8 @@ interface RecipeDao {
     suspend fun clearDb()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMeal(mealItems: MealItems?)
+    suspend fun insertMeal(mealsItems: MealItems?)
 
-    @Query("SELECT * FROM MealItems WHERE categoryName = :categoryName ORDER BY is DESC")
+    @Query("SELECT * FROM MealItems WHERE categoryName = :categoryName ORDER BY id DESC")
     suspend fun getSpecificMealList(categoryName: String) : List<MealItems>
 }

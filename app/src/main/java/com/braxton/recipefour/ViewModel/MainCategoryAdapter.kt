@@ -16,6 +16,7 @@ class MainCategoryAdapter: RecyclerView.Adapter<MainCategoryAdapter.RecipeViewHo
 
     var arrmainCategory = ArrayList<CategoryItems>()
     var ctx: Context? = null
+    var listener: OnItemClickListener? = null
 
     class RecipeViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val tvDishName: TextView = itemView.findViewById(R.id.tv_dish_name)
@@ -30,6 +31,9 @@ class MainCategoryAdapter: RecyclerView.Adapter<MainCategoryAdapter.RecipeViewHo
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         Glide.with(ctx!!).load(arrmainCategory[position].strcategorythumb).into(holder.imgDishName)
         holder.tvDishName.text = arrmainCategory[position].strcategory
+        holder.itemView.rootView.setOnClickListener {
+            listener!!.onClicked(arrmainCategory[position].strcategory)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): RecipeViewHolder {
@@ -39,5 +43,12 @@ class MainCategoryAdapter: RecyclerView.Adapter<MainCategoryAdapter.RecipeViewHo
 
     override fun getItemCount(): Int {
        return arrmainCategory.size
+    }
+
+    fun setClickListener(listener1: OnItemClickListener) {
+        listener = listener1
+    }
+    interface OnItemClickListener {
+        fun onClicked(categoryName: String)
     }
 }

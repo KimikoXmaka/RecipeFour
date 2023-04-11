@@ -1,5 +1,6 @@
 package com.braxton.recipefour.View
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.braxton.recipefour.Model.CategoryItems
@@ -27,13 +28,8 @@ class HomeActivity : BaseActivity() {
 
         getDataFromDb()
 
-        subCategoryAdapter.setData(arrSubCategory)
-
-        binding.rvMainCategory.layoutManager = LinearLayoutManager( this@HomeActivity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvMainCategory.adapter = mainCategoryAdapter
-
-        binding.rvSubCategory.layoutManager = LinearLayoutManager( this@HomeActivity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvSubCategory.adapter = subCategoryAdapter
+        mainCategoryAdapter.setClickListener(onClicked)
+        subCategoryAdapter.setClickListener(onClickedSubItem)
     }
 
     private fun getDataFromDb() {
@@ -49,6 +45,20 @@ class HomeActivity : BaseActivity() {
                 binding.rvMainCategory.layoutManager = LinearLayoutManager( this@HomeActivity, LinearLayoutManager.HORIZONTAL, false)
                 binding.rvMainCategory.adapter = mainCategoryAdapter
             }
+        }
+    }
+
+    private val onClicked = object: MainCategoryAdapter.OnItemClickListener {
+        override fun onClicked(categoryName: String) {
+            getMealDatafromDb(categoryName)
+        }
+    }
+
+    private val onClickedSubItem = object: SubCategoryAdapter.OnItemClickListener {
+        override fun onClick(id: String) {
+            var intent = Intent(this@HomeActivity, DetailActivity::class.java)
+            intent.putExtra("id", id)
+            startActivity(intent)
         }
     }
 
